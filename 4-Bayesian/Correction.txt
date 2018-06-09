@@ -1,1 +1,2 @@
-The Cauchy distribution makes the mean undefined, the variability of the mean is not affected by the number of measurements. The central limit theorem is not applicable and mean oftenlies outside of the probability distribution function.
+The Cauchy distribution makes the mean undefined, the variability of the mean is not affected by the number of measurements. 
+The central limit theorem is not applicable and the mean often lies outside of the probability distribution function.
