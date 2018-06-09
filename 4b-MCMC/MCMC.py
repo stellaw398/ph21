@@ -45,20 +45,22 @@ def lnprob(theta,x,y):
     if not np.isfinite(lp):
         return -np.inf
     return lp + lnlike(theta,x,y)
-ndim=1 #, nwalkers = 1, 100
-pos =  [1e-4*np.random.randn(ndim) for i in range(nwalkers)]
-sampler = emcee.EnsembleSampler(nwalkers, ndim, lnprob, args=(x,y))
+ndim=1
 cnt=1
 plt.figure(0)
-for i in [10,50,100]:
-    nwalkers = i
+for k in [10,50,100]:
+    nwalkers = k
+    sampler = emcee.EnsembleSampler(nwalkers, ndim, lnprob, args=(x,y))
+    pos =  [1e-4*np.random.randn(ndim) for i in range(nwalkers)]
     for j in [100,250,500]:
         sampler.run_mcmc(pos,j)
         samples = sampler.chain[:,50:,:].reshape((-1,ndim))
         fig=corner.corner(samples,labels=['h'],truths= [H_true])
-        plt.title('chain number = %d, chain length = %d'%(j,i))
+        plt.title('chain number = %d,length = %d'%(j,k))
+        plt.savefig('num_%d_len_%d.pdf'%(j,i))
         plt.show()
-
+        
+print 'increasing the chain number and the chain length results in a better Gaussian distribition'
 ##Part II Lighthouse
 def flash(n):
     theta = np.pi*np.random.rand(int(n))-np.pi/2 # theta between +/- Pi/2
@@ -91,15 +93,18 @@ sampler = emcee.EnsembleSampler(nwalkers, ndim, lnprob, args=(X,A))
 sampler.run_mcmc(pos,500)
 samples = sampler.chain[:,50:,:].reshape((-1,ndim))
 fig1=corner.corner(samples, labels=['a','b'],truths = [a_true,b_true])
+fig1.savefig('lighthouse.pdf')
 plt.show()
 
 def interloper(n,a,b):
     theta = np.pi*np.random.rand(int(n))-np.pi/2
     x_k = b*np.tan(theta)+a
     return x_k
-X = np.append(flash(N),interloper(2**9,4,3.984))
+X = np.append(flash(N),interloper(2**8,0.5,0.5))
 sampler = emcee.EnsembleSampler(nwalkers, ndim, lnprob, args=(X,A))
 sampler.run_mcmc(pos,500)
 samples = sampler.chain[:,50:,:].reshape((-1,ndim))
 fig2=corner.corner(samples,labels=['a','b'], truths = [a_true,b_true])
+fig2.savefig('interloper.pdf')
+## MCMC seems to spot the interloper but loses track of the actual lighthouse
 plt.show()
