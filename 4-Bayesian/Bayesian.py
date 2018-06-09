@@ -85,7 +85,7 @@ for n in (2)**np.linspace(0,8,9):
     cnt += 1
 plt.tight_layout()
 plt.show()
-print 'the mean of {x_k} is not a good estimator because the thetas are randomly distributed'
+print 'the mean of {x_k} is not a good estimator because the central limit theorem is not applicable to the Cauchy likelihood'
 plt.plot(cnt2 + 1)
 n = 128
 x_n = flash(n)
@@ -100,7 +100,6 @@ for ib in range(len(B)):
             L_ab += np.log(beta**2+((x-alpha)**2))
         p[ib,ia] =  n* np.log(beta) - L_ab
 p = p-np.amax(p)
-p =np.exp(p)
 p = np.exp(p)
 plt.contour(A,B,p)
 plt.xlabel('a (km)')
