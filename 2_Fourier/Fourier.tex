@@ -1,0 +1,73 @@
+\documentclass{article}
+\usepackage{amsmath, amssymb, amsthm,physics,graphicx,titling,hyperref,subcaption}
+\title{Ph 21.2- Introduction to Fourier Transforms}
+\author{Stella Wang}
+\begin{document}
+	\maketitle
+\section{Part 1}
+\begin{enumerate}
+	\item inserting Eq. (2) into Eq. (3)
+	\begin{align}
+		 \tilde h_k =&\frac{1}{L} \int_0^L \sum_{k=-\infty}^{\infty} \tilde h_k e^{-2\pi i f_k x}   e^{2\pi i f_k x} \dd{x} \\
+		 =& \frac{1}{L} \int_0^L \sum_{k=-\infty}^{\infty} \tilde h_k \dd{x} \\
+		 =& \frac{1}{L} \sum_{k=-\infty}^{\infty}  \int_0^L \tilde h_k \dd{x} \\
+		 =& \sum_{k=-\infty}^{\infty} \tilde h_k \\
+		 =&\tilde h_k 
+	\end{align}
+	\item 
+	\begin{align}
+		A\sin (2 \pi x/L + \varphi) &= \frac{A}{2i}(e^{i(2 \pi x/L + \varphi)} - e^{-i(2 \pi x/L + \varphi)}) \\
+		=& \frac{A}{2i} \big(e^{i \varphi} e^{-2 \pi i x/L} - e^{-i \varphi} e^{2 \pi i x/L}\big) \\
+		=& \bigg(\frac{A}{2i} e^{i \varphi}\bigg) e^{-2 \pi i x/L} - \bigg(\frac{A}{2i} e^{-i \varphi}\bigg) e^{2 \pi i x/L}
+	\end{align}
+	\item want \(\tilde h_{-k} = \tilde h_k^*\)
+	\begin{align}
+		\tilde h_{-k} =& \frac{1}{L} \int_0^L h(x) e^{2 \pi i f_{-k} x} \dd{x} \\
+		=& \frac{1}{L} \int_0^L h(x) e^{-2 \pi i f_{k} x} \dd{x} \\
+		=& \frac{1}{L} \int_0^L h(x) \big[ e^{2 \pi i f_{k} x} \big]^{*} \dd{x} \\
+		=& \bigg[ \frac{1}{L} \int_0^L h(x) e^{2 \pi i f_{k} x} \dd{x} \bigg]^{*} \\
+		=& \tilde h_k^*
+	\end{align}
+	\item convolution theorem 
+	\begin{align}
+		H(x) =& h^{(1)}(x) h^{(2)}(x) \\
+		h^{(1)}(x) =& \sum_{k=-\infty}^{\infty} \tilde h_k^{(1)} e^{-2 \pi i f_k x} \\
+		h^{(2)}(x) =& \sum_{k=-\infty}^{\infty} \tilde h_k^{(2)} e^{-2 \pi i f_k x} \\
+		H(x)=& \bigg( \sum_{k=-\infty}^{\infty} \tilde h_k^{(1)} e^{-2 \pi i f_k x} \bigg) \bigg( \sum_{k=-\infty}^{\infty} \tilde h_k^{(2)} e^{-2 \pi i f_k x} \bigg) \\
+		=& \sum_{k=-\infty}^{-\infty} \bigg( \sum_{k'=-\infty}^{\infty} \tilde h_{k-k'}^{(1)} \tilde h_{k'}^{(2)} \bigg) e^{-2 \pi i f_k x} \\
+		H_k =& \frac{1}{L} \int_0^L H(x) e^{2 \pi i f_k x} \dd{x} \\
+		=& \frac{1}{L} \int_0^L \sum_{l=-\infty}^{\infty} \bigg( \sum_{k'=-\infty}^{\infty} \tilde h_{l-k'}^{(1)} \tilde h_{k'}^{(2)} \bigg) e^{-2 \pi i f_l x} e^{2 \pi i f_k x} \dd{x} \\
+		=& \frac{1}{L} \int_0^L \sum_{l=-\infty}^{\infty} \bigg( \sum_{k'=-\infty}^{\infty} \tilde h_{l-k'}^{(1)} \tilde h_{k'}^{(2)} \bigg) e^{2 \pi i (f_k - f_l) x} \dd{x} \\
+		=& \frac{1}{L} \sum_{l=-\infty}^{\infty} \bigg( \sum_{k'=-\infty}^{\infty} \tilde h_{l-k'}^{(1)} \tilde h_{k'}^{(2)} \bigg) \int_0^L e^{2 \pi i (f_k - f_l) x} \dd{x} \\
+		\int_0^L e^{2 \pi i (f_k - f_l) x} \dd{x} =& \big\{_{0 \ \text{else}}^{L \ k=l} \\
+		H_k =& \sum_{k'=-\infty}^{\infty} \tilde h_{k-k'}^{(1)} \tilde h_{k'}^{(2)}
+	\end{align}
+	\begin{figure}[h]
+	\includegraphics[width = \textwidth]{Convolution.pdf}
+	\caption{graphical interpretation with \(\tilde h_k^{(2)} = \delta_{k,10}\)}
+	\end{figure}
+	\item Testing the numpy fft function
+		\begin{enumerate}
+			\item \(C + Acos(ft + \varphi)\) the FFT should result in two delta peaks. 
+			\begin{figure}[ht]
+			\includegraphics[width = \textwidth]{Cosine.pdf}
+			\end{figure}
+			\item \(A e^{[-B(t-\frac{L}{2})^2]}\)
+			\begin{align}
+				\tilde h_k =& \frac{1}{L} \int_{-\frac{L}{2}}^{\frac{L}{2}} A e^{-Bt^2} e^{2 \pi i f_k (t + \frac{L}{2})} \dd{t} \\
+				=& \frac{1}{L} \int_{-\frac{L}{2}}^{\frac{L}{2}} A e^{-Bt^2} e^{2 \pi i f_k t} e^{\pi i k}\dd{t} \\
+				=& \frac{e^{\pi i k}}{L} \int_{-\frac{L}{2}}^{\frac{L}{2}} A e^{-Bt^2} e^{2 \pi i f_k t} \dd{t} \\
+				=& \frac{e^{\pi i k}}{L} \int_{-\frac{L}{2}}^{\frac{L}{2}} A e^{-Bt^2} [\cos (2 \pi f_k t) + i \sin (2 \pi f_k t)] \dd{t} \\
+				=& \frac{A e^{\pi i k}}{L} \bigg[ \int_{-\frac{L}{2}}^{\frac{L}{2}} e^{-Bt^2} \cos (2 \pi f_k t) \dd{t} + i \int_{-\frac{L}{2}}^{\frac{L}{2}} e^{-Bt^2} \sin (2 \pi f_k t)] \dd{t} \bigg] \\
+				=& \frac{A e^{\pi i k}}{L} \int_{-\frac{L}{2}}^{\frac{L}{2}} e^{-Bt^2} \cos (2 \pi f_k t) \dd{t} \\
+				=& \frac{A e^{\pi i k}}{L} \int_{-\infty}^{\infty} e^{-Bt^2} \cos (2 \pi f_k t) \dd{t} \\
+				=& \frac{A e^{\pi i k}}{L} \sqrt{\frac{\pi}{B}} e^{\frac{-\pi^2 f_k^2}{B}} 
+			\end{align}
+			the transformation of a Gaussian is another Gaussian
+			\begin{figure}[ht]
+			\includegraphics[width = \textwidth]{Gauss.pdf}
+			\end{figure}
+		\end{enumerate}
+	
+\end{enumerate}
+\end{document}
